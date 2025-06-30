@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import math
-from timm.models.layers import trunc_normal_
+# from timm.models.layers import trunc_normal_
 
 def get_relative_position_index(win_h, win_w):
     # get pair-wise relative position index for each token inside the window
@@ -37,7 +37,7 @@ class W_MSA(nn.Module):
         self.relative_position_bias_table = nn.Parameter(torch.zeros((2 * 7 - 1) * (2 * 7 - 1), num_heads))
         # get pair-wise relative position index for each token inside the window
         self.register_buffer("relative_position_index", get_relative_position_index(7, 7))
-        trunc_normal_(self.relative_position_bias_table, std=.02)
+        # trunc_normal_(self.relative_position_bias_table, std=.02)
 
     def forward(self, x):
         # Shape of x: (B, L, dim)

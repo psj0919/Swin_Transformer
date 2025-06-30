@@ -28,8 +28,8 @@ def get_test_config_dict():
         test_path=test_path,
         test_ann_path=test_ann_path,
         num_class=num_class,
-        image_size = 256,
-        size= (256, 256)
+        image_size = 224,
+        size= (224, 224)
     )
     args = dict(
         gpu_id='0',
@@ -42,7 +42,7 @@ def get_test_config_dict():
         deploy=True
     )
     model = dict(
-        resume='/storage/sjpark/vehicle_data/checkpoints/night_dataloader/retinexformer/ResNet50_DA_ECA_b123_retinexformer.pth',  # weight_file
+        resume='',  # weight_file
         mode='test',
         save_dir='/storage/sjpark/vehicle_data/runs/deeplab/test/256',   # runs_file
     )

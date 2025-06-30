@@ -15,11 +15,8 @@ import matplotlib.pyplot as plt
 from distutils.version import LooseVersion
 from torchvision.utils import make_grid
 import torch.nn.functional as F
-from model.RepVGG_ResNet_deeplabv3plus import *
-from backbone.ResNet import build_backbone
-from dataset.gamma_correction import *
 
-
+from model.SwinTransformer import SwinTransformer
 
 except_classes = ['motorcycle', 'bicycle', 'twowheeler', 'pedestrian', 'rider', 'sidewalk', 'crosswalk', 'speedbump', 'redlane', 'stoplane', 'trafficlight']
 
@@ -46,7 +43,7 @@ class Trainer():
         self.global_step = 0
         self.save_path = self.cfg['model']['save_dir']
         self.writer = SummaryWriter(log_dir=self.save_path)
-        self.load_weight()
+        # self.load_weight()
 
 
     def setup_device(self):
@@ -81,19 +78,17 @@ class Trainer():
 
 
     def setup_network(self):
-        if self.cfg['model']['mode'] == 'train':
-            pretrain=True
-        else:
-            pretrain = False
-
-        model = DeepLab(num_classes=self.cfg['dataset']['num_class'], backbone=self.cfg['solver']['backbone'],
-                        output_stride=self.cfg['solver']['output_stride'], sync_bn=False, freeze_bn=False, pretrained=pretrain, deploy=self.cfg['solver']['deploy'])
+        # Swin-T dim = [96, 192, 384, 768], depths = [2, 2, 6, 2], num_heads = [3, 6, 12, 24]
+        # Swin-S dim = [96, 192, 384, 768], depths = [2, 2, 18, 2], num_heads = [3, 6, 12, 24]
+        # Swin-B dim = [128, 256, 512, 1024], depths = [2, 2, 18, 2], num_heads = [4, 8, 16, 32]
+        # Swin-L dim = [192, 384, 768, 1536], depths = [2, 2, 18, 2], num_heads = [6, 12, 24, 48]
+        model = SwinTransformer(dim = (192, 384, 768, 1536), depths=(2, 2, 18, 2),
+                        num_heads=(6, 12, 24, 48),
+                        resolutions=(56, 28, 14, 7),
+                        num_classes=21).to(self.device)
 
         return model.to(self.device)
 
-    def get_gamma_correction(self):
-        model = gamma_correction()
-        return model.to(self.device)
 
     def setup_optimizer(self):
         if self.cfg['solver']['optimizer'] == "sgd":
@@ -211,6 +206,7 @@ class Trainer():
                 # data, gamma = self.preprocessing(data)
                 out = self.model(data)
                 #
+                torch.autograd.set_detect_anomaly(True)
                 loss = self.loss(out, label)
 
                 self.optimizer.zero_grad()
@@ -239,7 +235,6 @@ class Trainer():
 
     def validation(self):
         self.model.eval()
-        # self.preprocessing.eval()
         total_ious = {}
         total_accs = {}
         avr_precision = {}
@@ -260,7 +255,6 @@ class Trainer():
             data = data.to(self.device)
             target = target.to(self.device)
             label = label.to(self.device)
-            # data, gamma = self.preprocessing(data)
 
             logits = self.model(data)
             pred = logits.softmax(dim=1).argmax(dim=1).to('cpu')
@@ -363,26 +357,14 @@ class Trainer():
         return total_ious, total_accs, cls, org_cls, target_crop_image, pred_crop_image, avr_precision, avr_recall, total_mAP
 
 
-    # def save_model(self, save_path):
-    #     save_file = 'ResNet50_DeepLabV3+_ECA_after_backbone.pth'
-    #     path = os.path.join(save_path, save_file)
-    #
-    #     torch.save({'model': deepcopy(self.model)}, path)
-    #     print("Success save_max_prob_mAP")
 
     def save_model(self, save_path):
-        save_file = 'ResNet50_DA_ECA_b123_normalize+clahe.pth'
-        # save_file_preprocessing = 'gamma_correction_sj'
+        save_file = 'Night_Swin_Transformer-L.pth'
 
         path = os.path.join(save_path, save_file)
-        # path2 = os.path.join(save_path, save_file_preprocessing)
 
         model = deepcopy(self.model)
-        # preprocessing = deepcopy(self.preprocessing)
-
-        convert_model = self.model.backbone.repvgg_model_convert()
-        model.backbone = convert_model
 
         torch.save(model.state_dict(), path)
-        # torch.save(preprocessing.state_dict(), path2)
+
         print("Success save_max_prob_mAP")

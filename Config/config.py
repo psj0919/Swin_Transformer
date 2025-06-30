@@ -28,18 +28,17 @@ def get_config_dict():
         test_path=test_path,
         test_ann_path=test_ann_path,
         num_class=num_class,
-        image_size = 256,
-        size= (256, 256)
+        image_size = 224,
+        size= (224, 224)
     )
     args = dict(
         gpu_id='0',
         batch_size=8,
         epochs=65,
         num_workers=6,
-        network_name='DeepLabV3+'
+        network_name='Swin_Transformer'
     )
     solver = dict(
-        backbone = 'resnet50',
         output_stride = 16,
         optimizer="adam",
         scheduler='cycliclr',
@@ -53,10 +52,10 @@ def get_config_dict():
     )
 
     model = dict(
-        resume='/storage/sjpark/vehicle_data/checkpoints/night_dataloader/retinexformer/ResNet50_DA_ECA_b123_retinexformer.pth',  # weight_file
-        mode='test',
-        save_dir='/storage/sjpark/vehicle_data/runs/deeplab/train/256/ResNet50_DA_ECA_b123_Normalize+clahe',
-        checkpoint='/storage/sjpark/vehicle_data/checkpoints/night_dataloader/'  # checkpoint_path
+        resume='',  # weight_file
+        mode='train',
+        save_dir='/storage/sjpark/vehicle_data/runs/Swin_transformer/train/256/Swin_transformer-L',
+        checkpoint='/storage/sjpark/vehicle_data/checkpoints/night_dataloader/Swin_transformer'  # checkpoint_path
     )
     config = dict(
         args=args,

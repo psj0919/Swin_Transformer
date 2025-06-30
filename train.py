@@ -1,5 +1,5 @@
 from Config.config import get_config_dict
-from Core.engine_deeplab import Trainer
+from Core.engine_Swin_transformer import Trainer
 
 
 
