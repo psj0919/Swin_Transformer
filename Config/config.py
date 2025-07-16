@@ -53,7 +53,7 @@ def get_config_dict():
 
     model = dict(
         resume='',  # weight_file
-        mode='train',
+        mode='test',
         save_dir='/storage/sjpark/vehicle_data/runs/Swin_transformer/train/256/Swin_transformer-L',
         checkpoint='/storage/sjpark/vehicle_data/checkpoints/night_dataloader/Swin_transformer'  # checkpoint_path
     )

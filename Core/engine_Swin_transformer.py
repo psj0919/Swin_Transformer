@@ -18,6 +18,9 @@ import torch.nn.functional as F
 
 from model.SwinTransformer import SwinTransformer
 
+import re, torch
+from collections import OrderedDict
+
 except_classes = ['motorcycle', 'bicycle', 'twowheeler', 'pedestrian', 'rider', 'sidewalk', 'crosswalk', 'speedbump', 'redlane', 'stoplane', 'trafficlight']
 
 CLASSES = [
@@ -42,15 +45,15 @@ class Trainer():
         self.scheduler = self.setup_scheduler()
         self.global_step = 0
         self.save_path = self.cfg['model']['save_dir']
-        self.writer = SummaryWriter(log_dir=self.save_path)
-        # self.load_weight()
+        # self.writer = SummaryWriter(log_dir=self.save_path)
+        self.load_weight()
 
 
     def setup_device(self):
-        if self.cfg['args']['gpu_id'] is not None:
-            device = torch.device("cuda:{}".format(self.cfg['args']['gpu_id']) if torch.cuda.is_available() else "cpu")
-        else:
-            device = torch.device("cpu")
+        # if self.cfg['args']['gpu_id'] is not None:
+        #     device = torch.device("cuda:{}".format(self.cfg['args']['gpu_id']) if torch.cuda.is_available() else "cpu")
+        # else:
+        device = torch.device("cpu")
 
         return device
 
@@ -130,16 +133,22 @@ class Trainer():
 
         return loss
 
+
     def load_weight(self):
-        file_path = self.cfg['model']['resume']
-        assert os.path.exists(file_path), f'There is no checkpoints file!'
-        print("Loading saved weighted {}".format(file_path))
-        ckpt = torch.load(file_path, map_location=self.device)
-        resume_state_dict = ckpt['model'].state_dict()
-        try:
-            self.model.load_state_dict(resume_state_dict, strict=True)  # load weights
-        except:
-            print("Not load_weight")
+        if self.cfg['model']['mode'] == 'train':
+            pass
+        elif self.cfg['model']['mode'] == 'test':
+            try:
+                file_path = self.cfg['model']['resume']
+                assert os.path.exists(file_path), f'There is no checkpoints file!'
+                ckpt = torch.load(file_path, map_location=self.device)
+
+                self.model.load_state_dict(ckpt, strict=True)  # load weights
+                print("success weight load!!")
+            except:
+                raise
+        else:
+            raise NotImplementedError("Not Implemented {}".format(self.cfg['dataset']['mode']))
 
 
     def training(self):

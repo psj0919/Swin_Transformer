@@ -34,21 +34,15 @@ def get_test_config_dict():
     args = dict(
         gpu_id='0',
         num_workers=6,
-        network_name='DeepLabV3+'
-    )
-    solver = dict(
-        backbone = 'resnet50',
-        output_stride=16,
-        deploy=True
+        network_name='Swin_Transformer-L'
     )
     model = dict(
-        resume='',  # weight_file
+        resume='/storage/sjpark/vehicle_data/checkpoints/night_dataloader/Swin_transformer/Night_Swin_Transformer-L.pth',  # weight_file
         mode='test',
-        save_dir='/storage/sjpark/vehicle_data/runs/deeplab/test/256',   # runs_file
+        save_dir='/storage/sjpark/vehicle_data/runs/SwinTransformer/test/256',   # runs_file
     )
     config = dict(
         args=args,
-        solver = solver,
         dataset=dataset,
         model=model
     )
