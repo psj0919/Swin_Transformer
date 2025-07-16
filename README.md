@@ -26,7 +26,11 @@ Swin Transformer Backbone -> UPerNet Decoder -> Semantic Segmentation Output
 3. **Shifted Windows**: Enable global context modeling via local windows and alternating shifts.
 <img width="577" height="156" alt="image" src="https://github.com/user-attachments/assets/72589673-6d97-461b-93e7-201991a81cd6" />
 
+<img width="612" height="176" alt="image" src="https://github.com/user-attachments/assets/356d5a43-89dd-4669-a9a3-fa4d592aada3" />
 
 ### UPerNet Head:
 - Pyramid Pooling Module (PPM)
 - Feature Pyramid Network (FPN) for multi-scale feature fusion
+
+  <img width="612" height="355" alt="image" src="https://github.com/user-attachments/assets/c5568292-549a-4a69-a659-d486b38b7e0d" />
+
