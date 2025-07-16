@@ -21,7 +21,7 @@ Swin Transformer Backbone -> UPerNet Decoder -> Semantic Segmentation Output
 
 ###  Swin Transformer Stages:
 1. **Stage 1**: Linear embedding of 4�4 patches.
-2. **Stage 2?4**: Patch merging layers progressively reduce resolution while increasing feature depth.
+2. **Stage 2~4**: Patch merging layers progressively reduce resolution while increasing feature depth.
 3. **Shifted Windows**: Enable global context modeling via local windows and alternating shifts.
 
 ### UPerNet Head:
